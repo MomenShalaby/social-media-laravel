@@ -14,10 +14,13 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-
-        return $this->success(Post::all(), "data is here", 200);
+        if ($request->expectsJson()) {
+            return $this->success(Post::all(), "data is here", 200);
+        } else {
+            return $this->error("in front", 200);
+        }
     }
 
     /**
