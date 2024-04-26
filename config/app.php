@@ -1,4 +1,6 @@
 <?php
+use Carbon\Laravel\ServiceProvider;
+use Illuminate\Support\Facades\Facade;
 
 return [
 
@@ -123,4 +125,16 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'providers' => ServiceProvider::defaultProviders()->merge([
+
+
+        Ichtrojan\Otp\OtpServiceProvider::class,
+
+    ])->toArray(),
+
+    'aliases' => Facade::defaultAliases()->merge([
+
+        'Otp' => Ichtrojan\Otp\Otp::class,
+
+    ])->toArray(),
 ];
