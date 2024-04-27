@@ -16,6 +16,13 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
     use HttpResponses;
+
+    /**
+     * Handle user login.
+     *
+     * @param  \App\Http\Requests\Auth\LoginUserRequest  $request
+     * @return \Illuminate\Http\Response
+     */
     public function login(LoginUserRequest $request)
     {
         $request->validated($request->all);
@@ -29,6 +36,13 @@ class AuthController extends Controller
         ]);
 
     }
+
+    /**
+     * Handle user registration.
+     *
+     * @param  \App\Http\Requests\Auth\StoreUserRequest  $request
+     * @return \Illuminate\Http\Response
+     */
     public function register(StoreUserRequest $request)
     {
         $request->validated($request->all);
@@ -44,6 +58,13 @@ class AuthController extends Controller
         $user->profile()->save($profile);
         return $this->success(['user' => $user, 'token' => $user->createToken('API Token of ' . $user->name)->plainTextToken], 'login successful');
     }
+
+
+    /**
+     * Handle user logout.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function logout()
     {
         Auth::user()->currentAccessToken()->delete();

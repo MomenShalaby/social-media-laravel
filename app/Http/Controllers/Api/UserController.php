@@ -11,6 +11,14 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     use HttpResponses;
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\Response
+     */
     public function show(Request $request, User $user)
     {
         $profile = $user->profile;

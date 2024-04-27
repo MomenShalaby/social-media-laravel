@@ -15,24 +15,27 @@ class PostController extends Controller
 {
     use HttpResponses;
     use FileUploader;
+
+
     /**
      * Display a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
+
     public function index(Request $request)
     {
         $posts = PostResource::collection(Post::with('user')->paginate());
         return $this->success($posts, "data is here", 200, true);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-    }
 
     /**
      * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
@@ -55,6 +58,9 @@ class PostController extends Controller
 
     /**
      * Display the specified resource.
+     *
+     * @param  \App\Models\Post  $post
+     * @return \Illuminate\Http\Response
      */
     public function show(Post $post)
     {
@@ -66,22 +72,18 @@ class PostController extends Controller
 
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit()
-    {
 
-    }
 
     /**
      * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Post  $post
+     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Post $post)
     {
-        // if ($request->user()->id !== $post->user_id) {
-        //     return $this->error("Unauthorized", 401);
-        // }
+        
         Gate::authorize('update', $post);
         $validatedData = $request->validate([
             'content' => 'sometimes|string|max:255',
@@ -94,6 +96,13 @@ class PostController extends Controller
         return $this->success($post, "data updated", 201);
     }
 
+    /**
+     * Update the image of the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Post  $post
+     * @return \Illuminate\Http\Response
+     */
     public function updatePostImage(Request $request, Post $post)
     {
 
@@ -109,9 +118,15 @@ class PostController extends Controller
         $post = new PostResource($post);
         return $this->success($post, 'updated', 202);
     }
+
     /**
      * Remove the specified resource from storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Post  $post
+     * @return \Illuminate\Http\Response
      */
+
     public function destroy(Request $request, Post $post)
     {
         Gate::authorize('delete', $post);

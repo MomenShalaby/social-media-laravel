@@ -17,6 +17,9 @@ class ProfileController extends Controller
 
     /**
      * Display the specified resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
     public function show(Request $request)
     {
@@ -29,6 +32,9 @@ class ProfileController extends Controller
 
     /**
      * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
     public function update(Request $request)
     {
@@ -48,6 +54,12 @@ class ProfileController extends Controller
     }
 
 
+    /**
+     * Update the profile image of the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function updateProfileImage(Request $request)
     {
         $profile = $request->user()->profile;

@@ -9,6 +9,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Connections extends Model
 {
     use HasFactory;
+    protected $primaryKey = ['sender_id', 'receiver_id'];
+
+    public $incrementing = false;
+
     protected $fillable = ['sender_id', 'receiver_id', 'status'];
 
     public function sender(): BelongsTo

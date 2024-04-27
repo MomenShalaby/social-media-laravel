@@ -18,6 +18,14 @@ class ResetPasswordController extends Controller
     {
         $this->otp = new Otp();
     }
+
+
+    /**
+     * Reset the user's password.
+     *
+     * @param  \App\Http\Requests\auth\ResetPasswordRequest  $request
+     * @return \Illuminate\Http\Response
+     */
     public function resetPassword(ResetPasswordRequest $request)
     {
         $otp = $this->otp->validate($request->email, $request->otp);
