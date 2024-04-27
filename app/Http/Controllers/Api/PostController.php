@@ -83,7 +83,7 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        
+
         Gate::authorize('update', $post);
         $validatedData = $request->validate([
             'content' => 'sometimes|string|max:255',
