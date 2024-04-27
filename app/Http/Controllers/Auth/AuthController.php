@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginUserRequest;
 use App\Http\Requests\Auth\StoreUserRequest;
+use App\Models\Profile;
 use App\Models\User;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
@@ -37,6 +38,10 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
 
         ]);
+        $profile = new Profile([
+            'user_id' => $user->id,
+        ]);
+        $user->profile()->save($profile);
         return $this->success(['user' => $user, 'token' => $user->createToken('API Token of ' . $user->name)->plainTextToken], 'login successful');
     }
     public function logout()

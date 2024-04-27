@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
+use App\Policies\PostPolicy;
 use App\Traits\FileUploader;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
@@ -41,7 +43,7 @@ class PostController extends Controller
 
         $post = Post::create([
             'content' => $validatedData['content'],
-            'user_id' => 1,
+            'user_id' => $request->user()->id,
         ]);
 
         $this->uploadImage($request, $post, "post-image");
@@ -77,22 +79,43 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-
+        // if ($request->user()->id !== $post->user_id) {
+        //     return $this->error("Unauthorized", 401);
+        // }
+        Gate::authorize('update', $post);
         $validatedData = $request->validate([
             'content' => 'sometimes|string|max:255',
+            'image' => 'sometimes|image:jpeg,png,jpg'
         ]);
         $post->update($validatedData);
-        $this->uploadImage($request, $post, "post-image");
         $this->deleteImage($post->image);
+        $this->uploadImage($request, $post, "post-image");
 
         return $this->success($post, "data updated", 201);
     }
 
+    public function updatePostImage(Request $request, Post $post)
+    {
+
+        Gate::authorize('updatePostImage', $post);
+
+        $validatedData = $request->validate([
+            'image' => 'sometimes|image:jpeg,png,jpg'
+        ]);
+
+        $this->deleteImage($post->image);
+        $this->uploadImage($request, $post, 'post-image');
+
+        $post = new PostResource($post);
+        return $this->success($post, 'updated', 202);
+    }
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post)
+    public function destroy(Request $request, Post $post)
     {
+        Gate::authorize('delete', $post);
+
         $this->deleteImage($post->image);
         $post->delete();
         return response(status: 204);

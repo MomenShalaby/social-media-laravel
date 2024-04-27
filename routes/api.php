@@ -2,6 +2,8 @@
 
 
 use App\Http\Controllers\Api\PostController;
+use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\auth\ForgotPasswordController;
 use App\Http\Controllers\auth\ResetPasswordController;
@@ -39,6 +41,17 @@ Route::post('password/reset', [ResetPasswordController::class, 'resetPassword'])
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('logout', [AuthController::class, 'logout']);
+
     Route::apiResource('posts', PostController::class);
+    Route::put('/posts/image/{post}', [PostController::class, 'updatePostImage']);
+
+
+
+    Route::get('/profile', [ProfileController::class, 'show']);
+    Route::put('/profile', [ProfileController::class, 'update']);
+    Route::put('/profile/image', [ProfileController::class, 'updateProfileImage']);
+
+    Route::get('/profile/{user}', [UserController::class, 'show']);
+
 
 });

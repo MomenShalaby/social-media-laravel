@@ -31,7 +31,7 @@ trait FileUploader
                 ]);
             }
 
-            return true;
+            return $request->image;
         } catch (\Throwable $th) {
             report($th);
 
@@ -50,7 +50,7 @@ trait FileUploader
         try {
             // Extract the file path from the URL
             $filePath = str_replace('/storage', 'public', $imageUrl);
-
+            
             // Check if the file exists
 
             if (Storage::exists($filePath)) {
@@ -68,4 +68,30 @@ trait FileUploader
         }
     }
 
+
+
+
+    /**
+     * Upload an image file and update the image field.
+     *
+     * @param \Illuminate\Http\UploadedFile $file
+     * @param mixed $data
+     * @param string $name
+     * @param string $inputName
+     * @return bool|string
+     */
+    public function updateImage($request, $data_to_add, $name, $data_to_delete, $inputName = 'image')
+    {
+        try {
+
+            // Delete old image if it exists
+            $this->deleteImage($data_to_delete->{$inputName});
+            $path = $this->uploadImage($request, $data_to_add, $name);
+            return $path;
+        } catch (\Throwable $th) {
+            report($th);
+
+            return $th->getMessage(); // Return error message if an exception occurs
+        }
+    }
 }
