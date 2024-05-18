@@ -25,36 +25,43 @@ class AuthController extends Controller
      */
 
     /**
+     * Log in a user.
+     *
      * @OA\Post(
-     * path="/api/login",
-     * summary="Sign in",
-     * description="Login by email, password",
-     * operationId="authLogin",
-     * tags={"auth"},
-     * @OA\RequestBody(
+     *     path="/api/login",
+     *     tags={"Authentication"},
+     *     summary="Log in a user",
+     *     description="Login by email, password",
+     *     operationId="authLogin",
+     *    @OA\RequestBody(
      *    required=true,
      *    description="Pass user credentials",
      *    @OA\JsonContent(
      *       required={"email","password"},
      *       @OA\Property(property="email", type="string", format="email", example="user1@mail.com"),
      *       @OA\Property(property="password", type="string", format="password", example="PassWord12345"),
+     *       
      *    ),
      * ),
-     * @OA\Response(
-     *    response=422,
-     *    description="Wrong credentials response",
-     *    @OA\JsonContent(
-     *       @OA\Property(property="message", type="string", example="Sorry, wrong email address or password. Please try again")
-     *        )
-     *     )
-     * ),
-     * @OA\Response(
+     *  @OA\Response(
      *     response=200,
      *     description="Success",
      *     @OA\JsonContent(
      *        @OA\Property(property="user", type="object", ref="#/components/schemas/User"),
+     *        @OA\Property(property="token", type="access_token", example="eyJ0eXAiOiJKV1QiLCJhbGc"),
+     *        
      *     )
      *  ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Unauthorized",
+     *         @OA\JsonContent(
+     *            @OA\Property(property="message", type="string", example="unuthorized"),
+     *            @OA\Property(property="status", type="string", example="Error")
+     *            
+     *         )
+     *     )
+     * )
      */
     public function login(LoginUserRequest $request)
     {
@@ -69,13 +76,14 @@ class AuthController extends Controller
         ]);
 
     }
-
     /**
      * Handle user registration.
      *
      * @param  \App\Http\Requests\Auth\StoreUserRequest  $request
      * @return \Illuminate\Http\Response
      */
+
+
     public function register(StoreUserRequest $request)
     {
         $request->validated($request->all);
@@ -92,11 +100,36 @@ class AuthController extends Controller
         return $this->success(['user' => $user, 'token' => $user->createToken('API Token of ' . $user->name)->plainTextToken], 'login successful');
     }
 
-
     /**
-     * Handle user logout.
-     *
-     * @return \Illuminate\Http\Response
+     * @OA\Post(
+     * path="/api/logout",
+     * summary="Logout",
+     * description="Logout user and invalidate token",
+     * operationId="authLogout",
+     * tags={"Authentication"},
+     * security={ {"bearer": {} }},
+     * @OA\Parameter(
+     *         name="Accept",
+     *         in="header",
+     *         description="Content type that the client expects in response",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string",
+     *             enum={"application/json"}
+     *         )
+     *     ),    
+     *      * @OA\Response(
+     *    response=200,
+     *    description="Success"
+     *     ),
+     * @OA\Response(
+     *    response=401,
+     *    description="Returns when user is not authenticated",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Not authorized"),
+     *    )
+     * )
+     * )
      */
     public function logout()
     {
